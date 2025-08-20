@@ -1,14 +1,16 @@
-# Temp-Manager
+# Sheepit-Manager-CLI
 
 > [!NOTE]
 > This project is still actively being developed. Don't expect things to work quite yet.
 
-## This is a temporary manager I'm trying to write for sheepit so I can get one out faster, since the main project is a fairly big undertaking for me.
+## What it is
+This is a Cli manager for [SheepIt](https://sheepit-renderfarm.com). It is meant to be a version of the Sheepit Manager that I can get working sooner, as I anticipate the other one taking a while.
 
-## What this should have
-- Auto-restart for the clients if they crash.
-- Multiple clients from one executable. 
-- CLI control so if you want to pause a client for instance you could do `sheepitm pause <name>`
+## Usage
+- Clone this repo
+- Run `cargo run -r -- -h` to see available options. 
 
-## What I hope to add, but I honestly don't know how hard it will be, so we shall see
-- Nvidia driver crashes. The hope would be it could detect the crash, and force restart the machine so it won't hang without any sign of it unless you check the session yourself.
+## Goals
+- [ ] Auto-restart for the clients if they crash.
+- [ ] Multiple clients from one executable.
+- [ ] Detect Nvidia driver crashes. The hope would be it could detect the crash, and force restart the machine so it won't hang without any sign of it unless you check the session yourself.
