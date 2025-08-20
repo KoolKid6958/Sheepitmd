@@ -30,7 +30,7 @@ struct Defaults {
     cores: u16,
 }
 
-pub fn generate_config() {
+pub fn generate_config(path: PathBuf) {
     let config = Config {
         general: General {
             client_name: "".to_string(),
@@ -47,5 +47,5 @@ pub fn generate_config() {
         defaults: Defaults { ram: 0, cores: 0 },
     };
     let toml = toml::to_string(&config).unwrap();
-    fs::write(".sheepit-manager.toml", toml).expect("Failed to generate config.");
+    fs::write(path, toml).expect("Failed to generate config.");
 }
