@@ -34,6 +34,8 @@ fn main() {
             config::generate_config(path.to_path_buf());
             println!("Config generated at: {:?}", path);
         }
-        None => {}
+        None => {
+            println!("Please run the program with arguments. Use -h to see available options.")
+        }
     }
 }
