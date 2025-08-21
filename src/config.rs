@@ -76,9 +76,10 @@ pub fn generate_config(path: PathBuf) {
         let mut i = 0;
         for gpu_name in gpus {
             let optix_id = format!("OPTIX_{}", i);
+            let key = format!("{}-{}", gpu_name, i);
             i = i + 1;
             gpu_map.insert(
-                gpu_name,
+                key,
                 Gpu {
                     ram: 0,
                     cores: 0,
