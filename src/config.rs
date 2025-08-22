@@ -38,6 +38,7 @@ struct Defaults {
 struct Cpu {
     ram: u16,
     cores: u16,
+    enabled: bool,
 }
 
 #[derive(Serialize)]
@@ -45,6 +46,7 @@ struct Gpu {
     ram: u16,
     cores: u16,
     optix_id: String,
+    enabled: bool,
 }
 
 fn shorten_gpu_name(gpu_name: &str) -> String {
@@ -84,6 +86,7 @@ pub fn generate_config(path: PathBuf) {
                     ram: 0,
                     cores: 0,
                     optix_id: optix_id,
+                    enabled: true,
                 },
             );
         }
@@ -103,7 +106,11 @@ pub fn generate_config(path: PathBuf) {
             sheepit_client_location: "/tmp/sheepit-client.jar".into(),
         },
         defaults: Defaults { ram: 0, cores: 0 },
-        cpu: Cpu { ram: 0, cores: 0 },
+        cpu: Cpu {
+            ram: 0,
+            cores: 0,
+            enabled: false,
+        },
         gpu: gpu_map,
     };
     let toml = toml::to_string(&config).unwrap();
