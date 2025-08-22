@@ -28,6 +28,32 @@ enum Commands {
     },
     /// List the available GPUs (Nvidia only)
     LsGPU {},
+    /// Start clients
+    Start {
+        /// Specify what client to start. If left blank it will start all clients that are enabled in the config file.
+        #[arg(value_name = "TARGET", default_value = "all")]
+        target: String,
+    },
+    /// Pause clients
+    Pause {
+        /// Specify what client to pause. If left blank it will pause all running clients.
+        #[arg(value_name = "TARGET", default_value = "all")]
+        target: String,
+    },
+    /// Stop clients
+    Stop {
+        /// Specify what client to stop. If left blank it will stop all running clients. Add --now to stop them immediately.
+        #[arg(value_name = "TARGET", default_value = "all")]
+        target: String,
+        #[arg(long)]
+        now: bool,
+    },
+    /// Get the current status of clients
+    Status {
+        /// Specify what client to get the status of. If left blank it will show the status of all running clients
+        #[arg(value_name = "TARGET", default_value = "all")]
+        target: String,
+    },
 }
 
 fn main() {
@@ -45,6 +71,24 @@ fn main() {
                 e
             ),
         },
+        Some(Commands::Start { target }) => {
+            println!("{}", target);
+        }
+        Some(Commands::Pause { target }) => {
+            println!("{}", target);
+        }
+        Some(Commands::Stop {
+            target,
+            now: stop_now,
+        }) => {
+            println!("{}", target);
+            if *stop_now {
+                println!("stop now")
+            }
+        }
+        Some(Commands::Status { target }) => {
+            println!("{}", target);
+        }
         None => {
             println!("Please run the program with arguments. Use -h to see available options.")
         }
