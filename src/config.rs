@@ -101,9 +101,9 @@ pub fn generate_config(path: PathBuf) {
             headless: true,
         },
         paths: Paths {
-            sheepit_cache_dir: "/tmp".into(),
+            sheepit_cache_dir: "/tmp/sheepit/cache".into(),
             shared_zip_dir: "".into(),
-            sheepit_client_location: "/tmp/sheepit-client.jar".into(),
+            sheepit_client_location: "/tmp/sheepit/client.jar".into(),
         },
         defaults: Defaults { ram: 0, cores: 0 },
         cpu: Cpu {
