@@ -1,5 +1,5 @@
 use clap::{Parser, Subcommand};
-use std::path::PathBuf;
+use std::{io, io::Write, path::PathBuf};
 
 mod config;
 mod hardware;
@@ -61,8 +61,25 @@ fn main() {
     let cli = Cli::parse();
     match &cli.command {
         Some(Commands::GenConfig { path }) => {
-            config::generate_config(path.to_path_buf());
-            println!("Config generated at: {:?}", path);
+            // Check if the file exists
+            if path.exists() {
+                print!("The file exists. Would you like to overwrite it? (y/N): ");
+                io::stdout().flush().unwrap();
+                let mut confirm = String::new();
+                io::stdin()
+                    .read_line(&mut confirm)
+                    .expect("There was an error");
+                let confirm = confirm.trim().to_lowercase();
+                if confirm == "y" {
+                    config::generate_config(path.to_path_buf());
+                    println!("Config generated at: {:?}", path);
+                } else {
+                    println!("Exiting")
+                }
+            } else {
+                config::generate_config(path.to_path_buf());
+                println!("Config generated at: {:?}", path);
+            }
         }
         Some(Commands::LsGPU {}) => match hardware::get_nvidia_gpus() {
             Ok(_) => {}
