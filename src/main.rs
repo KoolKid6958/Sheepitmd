@@ -1,6 +1,7 @@
 use clap::{Parser, Subcommand};
 use std::{io, io::Write, path::PathBuf};
 
+pub mod client;
 mod config;
 mod hardware;
 
@@ -89,7 +90,7 @@ fn main() {
             ),
         },
         Some(Commands::Start { target }) => {
-            println!("{}", target);
+            client::start_client(&target);
         }
         Some(Commands::Pause { target }) => {
             println!("{}", target);
