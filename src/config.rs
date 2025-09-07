@@ -1,9 +1,9 @@
 use nvml_wrapper::{Nvml, error::NvmlError};
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use std::{collections::BTreeMap, fs, path::PathBuf};
 
-#[derive(Serialize)]
-struct Config {
+#[derive(Serialize, Deserialize)]
+pub struct Config {
     general: General,
     paths: Paths,
     defaults: Defaults,
@@ -12,7 +12,7 @@ struct Config {
     gpu: BTreeMap<String, Gpu>,
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, Deserialize)]
 struct General {
     client_name: String,
     shared_zip: bool,
@@ -21,34 +21,33 @@ struct General {
     headless: bool,
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, Deserialize)]
 struct Paths {
     sheepit_cache_dir: PathBuf,
     shared_zip_dir: PathBuf,
     sheepit_client_location: PathBuf,
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, Deserialize)]
 struct Defaults {
     ram: u16,
     cores: u16,
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, Deserialize)]
 struct Cpu {
     ram: u16,
     cores: u16,
     enabled: bool,
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, Deserialize)]
 struct Gpu {
     ram: u16,
     cores: u16,
     optix_id: String,
     enabled: bool,
 }
-
 fn shorten_gpu_name(gpu_name: &str) -> String {
     gpu_name
         .replace("NVIDIA GeForce RTX", "")
@@ -115,4 +114,34 @@ pub fn generate_config(path: PathBuf) {
     };
     let toml = toml::to_string(&config).unwrap();
     fs::write(path, toml).expect("Failed to generate config.");
+}
+
+pub fn read_config(path: PathBuf) -> Config {
+    let raw_file =
+        fs::read_to_string(path).expect("Failed to read config file, have you generated one yet?");
+    let config: Config = toml::from_str(&raw_file)
+        .expect("Failed to parse Toml. Please ensure your config is valid.");
+    config
+}
+
+pub fn print_config(path: PathBuf) {
+    let config = read_config(path);
+    println!(
+        "User: {}, Client Name: {}",
+        config.general.username, config.general.client_name
+    );
+    println!(
+        "Using Cache dir: {:?} and client: {:?}",
+        config.paths.sheepit_cache_dir, config.paths.sheepit_client_location
+    );
+    println!(
+        "CPU -> Cores: {}, RAM: {}, Enabled: {}",
+        config.cpu.cores, config.cpu.ram, config.cpu.enabled
+    );
+    for (key, gpu) in &config.gpu {
+        println!(
+            "{} -> Cores: {}, RAM: {}, Optix ID: {}, Enabled: {}",
+            key, gpu.cores, gpu.ram, gpu.optix_id, gpu.enabled
+        );
+    }
 }

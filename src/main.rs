@@ -55,6 +55,17 @@ enum Commands {
         #[arg(value_name = "TARGET", default_value = "all")]
         target: String,
     },
+    /// Print the config
+    PrintConfig {
+        /// Config file to read
+        #[arg(
+            short,
+            long,
+            value_name = "FILE",
+            default_value = "./.sheepit-manager.toml"
+        )]
+        path: PathBuf,
+    },
 }
 
 fn main() {
@@ -107,6 +118,7 @@ fn main() {
         Some(Commands::Status { target }) => {
             println!("{}", target);
         }
+        Some(Commands::PrintConfig { path }) => config::print_config(path.to_path_buf()),
         None => {
             println!("Please run the program with arguments. Use -h to see available options.")
         }
