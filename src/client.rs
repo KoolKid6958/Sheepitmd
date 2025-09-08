@@ -37,7 +37,7 @@ fn download_client() -> Result<(), Box<dyn std::error::Error>> {
     } else {
     }
     let status = Command::new("curl")
-        .args(["-L", "-o", output, url])
+        .args(["-#", "-L", "-o", output, url])
         .status()?;
     if !status.success() {
         return Err(format!("curl failed with exit code {:?}", status.code()).into());
