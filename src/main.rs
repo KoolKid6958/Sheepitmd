@@ -17,16 +17,7 @@ struct Cli {
 enum Commands {
     /// Generate a default config based on the hardware in the current system.
     #[command(name = "gen-config")]
-    GenConfig {
-        /// Path to save the config in
-        #[arg(
-            short,
-            long,
-            value_name = "FILE",
-            default_value = "./.sheepit-manager.toml"
-        )]
-        path: PathBuf,
-    },
+    GenConfig {},
     /// List the available GPUs (Nvidia only)
     LsGPU {},
     /// Start clients
@@ -56,25 +47,17 @@ enum Commands {
         target: String,
     },
     /// Print the config
-    PrintConfig {
-        /// Config file to read
-        #[arg(
-            short,
-            long,
-            value_name = "FILE",
-            default_value = "./.sheepit-manager.toml"
-        )]
-        path: PathBuf,
-    },
+    PrintConfig {},
 }
 
 fn main() {
     // Inital arg stuff.
     let cli = Cli::parse();
+    let config_path: PathBuf = "./.sheepit-manager.toml".into();
     match &cli.command {
-        Some(Commands::GenConfig { path }) => {
+        Some(Commands::GenConfig {}) => {
             // Check if the file exists
-            if path.exists() {
+            if config_path.exists() {
                 print!("The file exists. Would you like to overwrite it? (y/N): ");
                 io::stdout().flush().unwrap();
                 let mut confirm = String::new();
@@ -83,14 +66,14 @@ fn main() {
                     .expect("There was an error");
                 let confirm = confirm.trim().to_lowercase();
                 if confirm == "y" {
-                    config::generate_config(path.to_path_buf());
-                    println!("Config generated at: {:?}", path);
+                    config::generate_config(config_path.to_path_buf());
+                    println!("Config generated at: {:?}", config_path);
                 } else {
                     println!("Exiting")
                 }
             } else {
-                config::generate_config(path.to_path_buf());
-                println!("Config generated at: {:?}", path);
+                config::generate_config(config_path.to_path_buf());
+                println!("Config generated at: {:?}", config_path);
             }
         }
         Some(Commands::LsGPU {}) => match hardware::get_nvidia_gpus() {
@@ -118,7 +101,7 @@ fn main() {
         Some(Commands::Status { target }) => {
             println!("{}", target);
         }
-        Some(Commands::PrintConfig { path }) => config::print_config(path.to_path_buf()),
+        Some(Commands::PrintConfig {}) => config::print_config(config_path.to_path_buf()),
         None => {
             println!("Please run the program with arguments. Use -h to see available options.")
         }

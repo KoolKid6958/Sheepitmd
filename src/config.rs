@@ -70,7 +70,7 @@ fn get_gpus() -> Result<Vec<String>, NvmlError> {
     Ok(gpus)
 }
 
-pub fn generate_config(path: PathBuf) {
+pub fn generate_config(config_path: PathBuf) {
     // Dynamic GPU Map
     let mut gpu_map = BTreeMap::new();
     if let Ok(gpus) = get_gpus() {
@@ -113,19 +113,19 @@ pub fn generate_config(path: PathBuf) {
         gpu: gpu_map,
     };
     let toml = toml::to_string(&config).unwrap();
-    fs::write(path, toml).expect("Failed to generate config.");
+    fs::write(config_path, toml).expect("Failed to generate config.");
 }
 
-pub fn read_config(path: PathBuf) -> Config {
-    let raw_file =
-        fs::read_to_string(path).expect("Failed to read config file, have you generated one yet?");
+pub fn read_config(config_path: PathBuf) -> Config {
+    let raw_file = fs::read_to_string(config_path)
+        .expect("Failed to read config file, have you generated one yet?");
     let config: Config = toml::from_str(&raw_file)
         .expect("Failed to parse Toml. Please ensure your config is valid.");
     config
 }
 
-pub fn print_config(path: PathBuf) {
-    let config = read_config(path);
+pub fn print_config(config_path: PathBuf) {
+    let config = read_config(config_path);
     println!(
         "User: {}, Client Name: {}",
         config.general.username, config.general.client_name
