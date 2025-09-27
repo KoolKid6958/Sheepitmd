@@ -4,48 +4,48 @@ use std::{collections::BTreeMap, fs, path::PathBuf};
 
 #[derive(Serialize, Deserialize)]
 pub struct Config {
-    general: General,
-    paths: Paths,
-    defaults: Defaults,
-    cpu: Cpu,
+    pub general: General,
+    pub paths: Paths,
+    pub defaults: Defaults,
+    pub cpu: Cpu,
     #[serde(skip_serializing_if = "BTreeMap::is_empty")]
-    gpu: BTreeMap<String, Gpu>,
+    pub gpu: BTreeMap<String, Gpu>,
 }
 
 #[derive(Serialize, Deserialize)]
-struct General {
-    client_name: String,
-    shared_zip: bool,
-    username: String,
-    renderkey: String,
-    headless: bool,
+pub struct General {
+    pub client_name: String,
+    pub shared_zip: bool,
+    pub username: String,
+    pub renderkey: String,
+    pub headless: bool,
 }
 
 #[derive(Serialize, Deserialize)]
-struct Paths {
-    sheepit_cache_dir: PathBuf,
-    shared_zip_dir: PathBuf,
-    sheepit_client_location: PathBuf,
+pub struct Paths {
+    pub sheepit_cache_dir: PathBuf,
+    pub shared_zip_dir: PathBuf,
+    pub sheepit_client_location: PathBuf,
 }
 
 #[derive(Serialize, Deserialize)]
-struct Defaults {
-    ram: u16,
-    cores: u16,
+pub struct Defaults {
+    pub ram: u16,
+    pub cores: u16,
 }
 
 #[derive(Serialize, Deserialize)]
-struct Cpu {
-    ram: u16,
-    cores: u16,
-    enabled: bool,
+pub struct Cpu {
+    pub ram: u16,
+    pub cores: u16,
+    pub enabled: bool,
 }
 
 #[derive(Serialize, Deserialize)]
-struct Gpu {
-    ram: u16,
-    cores: u16,
-    optix_id: String,
+pub struct Gpu {
+    pub ram: u16,
+    pub cores: u16,
+    pub optix_id: String,
     enabled: bool,
 }
 fn shorten_gpu_name(gpu_name: &str) -> String {
@@ -124,8 +124,7 @@ pub fn read_config(config_path: PathBuf) -> Config {
     config
 }
 
-pub fn print_config(config_path: PathBuf) {
-    let config = read_config(config_path);
+pub fn print_config(config: Config) {
     println!(
         "User: {}, Client Name: {}",
         config.general.username, config.general.client_name
