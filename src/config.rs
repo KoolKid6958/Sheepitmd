@@ -2,7 +2,7 @@ use nvml_wrapper::{Nvml, error::NvmlError};
 use serde::{Deserialize, Serialize};
 use std::{collections::BTreeMap, fs, path::PathBuf};
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 pub struct Config {
     pub general: General,
     pub paths: Paths,
@@ -12,7 +12,7 @@ pub struct Config {
     pub gpu: BTreeMap<String, Gpu>,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 pub struct General {
     pub client_name: String,
     pub shared_zip: bool,
@@ -21,27 +21,27 @@ pub struct General {
     pub headless: bool,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 pub struct Paths {
     pub sheepit_cache_dir: PathBuf,
     pub shared_zip_dir: PathBuf,
     pub sheepit_client_location: PathBuf,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 pub struct Defaults {
     pub ram: u16,
     pub cores: u16,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 pub struct Cpu {
     pub ram: u16,
     pub cores: u16,
     pub enabled: bool,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 pub struct Gpu {
     pub ram: u16,
     pub cores: u16,
