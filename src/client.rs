@@ -1,19 +1,22 @@
 // This file is meant for managing the sheepit client itself.
+use crate::config;
+use crate::config::Config;
 use std::{
     fs,
     path::{Path, PathBuf},
     process::Command,
 };
 
-use crate::config::Config;
-
-pub fn start_client(client: &str, config: Config) {
+pub fn start_client(client: &str, config_path: PathBuf) {
+    let config = config::read_config(config_path.clone());
     println!("Starting: {}", client);
     // CURRENTLY THIS CODE DOESNT USE A SPECIFIC CLIENT. IT ONLY STARTS IT ON CPU WITH DEFAULT SETTINGS.
     let client_path: PathBuf = config.paths.sheepit_client_location.clone();
     match check_if_client_exists(client_path) {
         true => {}
-        false => download_client(config).expect("There was an error downloading the client"),
+        false => {
+            download_client(config.clone()).expect("There was an error downloading the client")
+        }
     }
 }
 

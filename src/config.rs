@@ -124,7 +124,8 @@ pub fn read_config(config_path: PathBuf) -> Config {
     config
 }
 
-pub fn print_config(config: Config) {
+pub fn print_config(config_path: PathBuf) {
+    let config = read_config(config_path.clone());
     println!(
         "User: {}, Client Name: {}",
         config.general.username, config.general.client_name

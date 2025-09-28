@@ -54,7 +54,6 @@ fn main() {
     // Inital arg stuff.
     let cli = Cli::parse();
     let config_path: PathBuf = "./.sheepit-manager.toml".into();
-    let config = config::read_config(config_path.clone());
     match &cli.command {
         Some(Commands::GenConfig {}) => {
             // Check if the file exists
@@ -85,7 +84,7 @@ fn main() {
             ),
         },
         Some(Commands::Start { target }) => {
-            client::start_client(&target, config);
+            client::start_client(&target, config_path);
         }
         Some(Commands::Pause { target }) => {
             println!("{}", target);
@@ -102,7 +101,7 @@ fn main() {
         Some(Commands::Status { target }) => {
             println!("{}", target);
         }
-        Some(Commands::PrintConfig {}) => config::print_config(config),
+        Some(Commands::PrintConfig {}) => config::print_config(config_path),
         None => {
             println!("Please run the program with arguments. Use -h to see available options.")
         }
