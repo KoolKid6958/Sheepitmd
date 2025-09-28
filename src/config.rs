@@ -19,6 +19,7 @@ pub struct General {
     pub username: String,
     pub renderkey: String,
     pub headless: bool,
+    pub server: String,
 }
 
 #[derive(Serialize, Deserialize, Clone)]
@@ -98,6 +99,7 @@ pub fn generate_config(config_path: PathBuf) {
             username: "".to_string(),
             renderkey: "".to_string(),
             headless: true,
+            server: "https://sheepit-renderfarm.com".to_string(),
         },
         paths: Paths {
             sheepit_cache_dir: "/tmp/sheepit/cache".into(),
@@ -127,7 +129,7 @@ pub fn read_config(config_path: PathBuf) -> Config {
 pub fn print_config(config_path: PathBuf) {
     let config = read_config(config_path.clone());
     println!(
-        "User: {}, Client Name: {}",
+        "User: {:?}, Client Name: {:?}",
         config.general.username, config.general.client_name
     );
     println!(
