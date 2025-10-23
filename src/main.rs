@@ -4,6 +4,7 @@ use std::{io, io::Write, path::PathBuf};
 pub mod client;
 mod config;
 mod hardware;
+mod httpd;
 
 /// CLI Manager for Sheepit.
 #[derive(Parser)]
@@ -48,9 +49,12 @@ enum Commands {
     },
     /// Print the config
     PrintConfig {},
+    /// Start as the Daemon
+    Daemon {},
 }
 
-fn main() {
+#[tokio::main]
+async fn main() {
     // Inital arg stuff.
     let cli = Cli::parse();
     let config_path: PathBuf = "./.sheepit-manager.toml".into();
@@ -104,6 +108,9 @@ fn main() {
         Some(Commands::PrintConfig {}) => config::print_config(config_path),
         None => {
             println!("Please run the program with arguments. Use -h to see available options.")
+        }
+        Some(Commands::Daemon {}) => {
+            httpd::start().await;
         }
     }
 }
