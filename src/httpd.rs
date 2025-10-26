@@ -4,8 +4,9 @@ use std::net::SocketAddr;
 use tokio::net::TcpListener;
 
 #[derive(Deserialize)]
-struct Message {
-    message: String,
+struct Instruction {
+    instruction: String,
+    client: String,
 }
 
 pub async fn start() {
@@ -16,14 +17,31 @@ pub async fn start() {
     axum::serve(listener, app).await.unwrap();
 }
 
-async fn get_command(Json(payload): Json<Message>) -> &'static str {
-    match payload.message.as_str() {
-        "Hello" => {
-            println!("World!");
-            "Got Message."
+async fn get_command(Json(payload): Json<Instruction>) -> &'static str {
+    match payload.instruction.as_str() {
+        "start_client" => {
+            println!("Starting client: {}", payload.client);
+            "Starting client."
+        }
+        "pause_client" => {
+            println!("Pausing client: {}", payload.client);
+            "Pausing client."
+        }
+        "stop_client" => {
+            println!("Stopping client: {}", payload.client);
+            "Stopping client."
+        }
+        "stop_client_now" => {
+            println!("Stopping client: {} Now", payload.client);
+            "Stopping client now."
+        }
+        "get_client_status" => {
+            println!("Getting status of: {}", payload.client);
+            "Status of: {} "
         }
         _ => {
             println!("Unknown");
+            println!("{}", &payload.instruction);
             "Unknown"
         }
     }

@@ -3,6 +3,7 @@ use std::{io, io::Write, path::PathBuf};
 
 pub mod client;
 mod config;
+mod control;
 mod hardware;
 mod httpd;
 
@@ -35,11 +36,15 @@ enum Commands {
     },
     /// Stop clients
     Stop {
-        /// Specify what client to stop. If left blank it will stop all running clients. Add --now to stop them immediately.
+        /// Specify what client to stop. If left blank it will stop all running clients.
         #[arg(value_name = "TARGET", default_value = "all")]
         target: String,
-        #[arg(long)]
-        now: bool,
+    },
+    /// Stop clients immediately
+    StopNow {
+        /// Specify what client to stop. If left blank it will stop all running clients.
+        #[arg(value_name = "TARGET", default_value = "all")]
+        target: String,
     },
     /// Get the current status of clients
     Status {
@@ -88,22 +93,24 @@ async fn main() {
             ),
         },
         Some(Commands::Start { target }) => {
-            client::start_client(&target, config_path);
+            let instruction: &str = "start_client";
+            let _ = control::manage_client(&target, instruction).await;
         }
         Some(Commands::Pause { target }) => {
-            println!("{}", target);
+            let instruction: &str = "pause_client";
+            let _ = control::manage_client(&target, instruction).await;
         }
-        Some(Commands::Stop {
-            target,
-            now: stop_now,
-        }) => {
-            println!("{}", target);
-            if *stop_now {
-                println!("stop now")
-            }
+        Some(Commands::Stop { target }) => {
+            let instruction: &str = "stop_client";
+            let _ = control::manage_client(&target, instruction).await;
+        }
+        Some(Commands::StopNow { target }) => {
+            let instruction: &str = "stop_client_now";
+            let _ = control::manage_client(&target, instruction).await;
         }
         Some(Commands::Status { target }) => {
-            println!("{}", target);
+            let instruction: &str = "get_client_status";
+            let _ = control::manage_client(&target, instruction).await;
         }
         Some(Commands::PrintConfig {}) => config::print_config(config_path),
         None => {
