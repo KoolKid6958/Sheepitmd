@@ -102,9 +102,9 @@ pub fn generate_config(config_path: PathBuf) {
             server: "https://sheepit-renderfarm.com".to_string(),
         },
         paths: Paths {
-            sheepit_cache_dir: "/tmp/sheepit/cache".into(),
+            sheepit_cache_dir: "/tmp/sheepitm/cache".into(),
             shared_zip_dir: "".into(),
-            sheepit_client_location: "/tmp/sheepit/client.jar".into(),
+            sheepit_client_location: "/tmp/sheepitm/client.jar".into(),
         },
         defaults: Defaults { ram: 0, cores: 0 },
         cpu: Cpu {
