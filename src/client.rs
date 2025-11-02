@@ -3,7 +3,7 @@ use crate::config;
 use crate::config::Config;
 use reqwest::Client;
 use std::path::{Path, PathBuf};
-use tokio::fs;
+use tokio::{fs, io::AsyncWriteExt};
 
 pub async fn start_client(client: &str) {
     let config_path: PathBuf = "./.sheepit-manager.toml".into();
@@ -44,13 +44,12 @@ async fn download_client(config: Config) -> Result<(), Box<dyn std::error::Error
     } else {
     }
     let client = Client::new();
-    let response = client.get(url).send().await?;
-    if !response.status().is_success() {
-        return Err(format!("Download failed: {}", response.status()).into());
-    }
-    let bytes = response.bytes().await?;
-    fs::write(client_location, &bytes).await?;
+    let mut response = client.get(url).send().await?;
+    let mut file = fs::File::create(&client_location).await?;
 
+    while let Some(chunk) = response.chunk().await? {
+        file.write_all(&chunk).await?;
+    }
     println!("Client Downloaded!");
     Ok(())
 }
