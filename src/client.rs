@@ -11,7 +11,7 @@ pub async fn start_client(client: &str) {
     println!("Starting: {}", client);
     // CURRENTLY THIS CODE DOESNT USE A SPECIFIC CLIENT. IT ONLY STARTS IT ON CPU WITH DEFAULT SETTINGS.
     let client_path: PathBuf = config.paths.sheepit_client_location.clone();
-    match check_if_client_exists(client_path) {
+    match check_if_jar_exists(client_path) {
         true => {}
         false => download_client(config.clone())
             .await
@@ -19,7 +19,12 @@ pub async fn start_client(client: &str) {
     }
 }
 
-fn check_if_client_exists(path: PathBuf) -> bool {
+pub async fn pause_client(_client: &str) {}
+pub async fn stop_client(_client: &str) {}
+pub async fn stop_client_now(_client: &str) {}
+pub async fn client_status(_client: &str) {}
+
+fn check_if_jar_exists(path: PathBuf) -> bool {
     if Path::new(&path).exists() {
         true
     } else {
