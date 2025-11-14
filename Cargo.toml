@@ -8,7 +8,13 @@ nvml-wrapper = "0.11.0"
 clap = { version = "4.5.50", features = ["derive"] }
 serde = { version = "1.0.228", features = ["derive"] }
 toml = "0.9.8"
-tokio = { version = "1.48.0", features = ["macros", "rt-multi-thread", "fs"] }
+tokio = { version = "1.48.0", features = [
+    "macros",
+    "rt-multi-thread",
+    "fs",
+    "process",
+] }
 axum = "0.8.6"
 serde_json = "1.0.145"
 reqwest = { version = "0.12.24", features = ["json"] }
+once_cell = "1.21.3"
