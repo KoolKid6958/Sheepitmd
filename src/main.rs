@@ -7,7 +7,7 @@ mod control;
 mod hardware;
 mod httpd;
 
-/// CLI Manager for Sheepit.
+/// Daemon for the SheepIt Manager
 #[derive(Parser)]
 #[command(version, about, long_about = None)]
 struct Cli {
