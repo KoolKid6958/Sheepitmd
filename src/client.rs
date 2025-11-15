@@ -49,6 +49,13 @@ async fn send_command_to_process(client_id: &str, command: &str) {
 pub async fn start_client(client: &str) {
     let config_path: PathBuf = "./.sheepit-manager.toml".into();
     let config = config::read_config(config_path.clone());
+    {
+        let map = CLIENTS.lock().await;
+        if map.contains_key(client) {
+            println!("Cannot start {:?} because it is already running.", client);
+            return;
+        }
+    }
     println!("Starting: {}", client);
     // CURRENTLY THIS CODE DOESNT USE A SPECIFIC CLIENT. IT ONLY STARTS IT ON CPU WITH DEFAULT SETTINGS.
     let client_path: PathBuf = config.paths.sheepit_client_location.clone();
