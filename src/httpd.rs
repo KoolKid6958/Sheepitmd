@@ -19,37 +19,37 @@ pub async fn start() {
     axum::serve(listener, app).await.unwrap();
 }
 
-async fn get_command(Json(payload): Json<Instruction>) -> &'static str {
+async fn get_command(Json(payload): Json<Instruction>) -> String {
     match payload.instruction.as_str() {
         "start_client" => {
-            println!("Starting client: {}", payload.client);
+            println!("Starting client: {:?}", payload.client);
             client::start_client(&payload.client).await;
-            "Starting client."
+            format!("Starting client: {:?}", payload.client)
         }
         "pause_client" => {
-            println!("Pausing client: {}", payload.client);
+            println!("Pausing client: {:?}", payload.client);
             client::pause_client(&payload.client).await;
-            "Pausing client."
+            format!("Pausing client: {:?}", payload.client)
         }
         "stop_client" => {
-            println!("Stopping client: {}", payload.client);
+            println!("Stopping client: {:?}", payload.client);
             client::stop_client(&payload.client).await;
-            "Stopping client."
+            format!("Stopping client: {:?}", payload.client)
         }
         "stop_client_now" => {
-            println!("Stopping client: {} Now", payload.client);
+            println!("Stopping client: {:?} Now", payload.client);
             client::stop_client_now(&payload.client).await;
-            "Stopping client now."
+            format!("Stopping client: {:?} Now", payload.client)
         }
         "get_client_status" => {
-            println!("Getting status of: {}", payload.client);
+            println!("Getting status of: {:?}", payload.client);
             client::client_status(&payload.client).await;
-            "Status of: {} "
+            format!("Status of: {} (This doesnt work yet)", payload.client)
         }
         _ => {
             println!("Unknown");
             println!("{}", &payload.instruction);
-            "Unknown"
+            format!("Unknown instruction, are you sure the client and server versions match?")
         }
     }
 }
