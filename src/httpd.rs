@@ -21,26 +21,10 @@ pub async fn start() {
 
 async fn get_command(Json(payload): Json<Instruction>) -> String {
     match payload.instruction.as_str() {
-        "start_client" => {
-            println!("Starting client: {:?}", payload.client);
-            client::start_client(&payload.client).await;
-            format!("Starting client: {:?}", payload.client)
-        }
-        "pause_client" => {
-            println!("Pausing client: {:?}", payload.client);
-            client::pause_client(&payload.client).await;
-            format!("Pausing client: {:?}", payload.client)
-        }
-        "stop_client" => {
-            println!("Stopping client: {:?}", payload.client);
-            client::stop_client(&payload.client).await;
-            format!("Stopping client: {:?}", payload.client)
-        }
-        "stop_client_now" => {
-            println!("Stopping client: {:?} Now", payload.client);
-            client::stop_client_now(&payload.client).await;
-            format!("Stopping client: {:?} Now", payload.client)
-        }
+        "start_client" => client::start_client(&payload.client).await,
+        "pause_client" => client::pause_client(&payload.client).await,
+        "stop_client" => client::stop_client(&payload.client).await,
+        "stop_client_now" => client::stop_client_now(&payload.client).await,
         "get_client_status" => {
             println!("Getting status of: {:?}", payload.client);
             client::client_status(&payload.client).await;

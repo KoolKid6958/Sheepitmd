@@ -10,7 +10,7 @@ use tokio::{fs, io::AsyncWriteExt, process::Child, process::Command};
 
 static CLIENTS: Lazy<Mutex<HashMap<String, Child>>> = Lazy::new(|| Mutex::new(HashMap::new()));
 
-async fn send_command_to_process(client_id: &str, command: &str) {
+async fn send_command_to_process(client_id: &str, command: &str) -> String {
     let mut map = CLIENTS.lock().await;
 
     if let Some(child) = map.get_mut(client_id) {
@@ -22,10 +22,21 @@ async fn send_command_to_process(client_id: &str, command: &str) {
                     client_id,
                     e
                 );
-                return;
+                return format!(
+                    "Failed to send command '{}' to client '{}': {}",
+                    command.trim_end(),
+                    client_id,
+                    e,
+                );
             }
             if let Err(e) = stdin.flush().await {
                 eprintln!(
+                    "Failed to flush command '{}' to client '{}': {}",
+                    command.trim_end(),
+                    client_id,
+                    e
+                );
+                return format!(
                     "Failed to flush command '{}' to client '{}': {}",
                     command.trim_end(),
                     client_id,
@@ -37,23 +48,30 @@ async fn send_command_to_process(client_id: &str, command: &str) {
                     command.trim_end(),
                     client_id
                 );
+                return format!(
+                    "Sent command '{}' to client '{}'",
+                    command.trim_end(),
+                    client_id
+                );
             }
         } else {
             eprintln!("Client '{}' has no stdin handle", client_id);
+            return format!("Client '{}' has no stdin handle", client_id);
         }
     } else {
         println!("Client '{}' is not running.", client_id);
+        return format!("Client '{}' is not running.", client_id);
     }
 }
 
-pub async fn start_client(client: &str) {
+pub async fn start_client(client: &str) -> String {
     let config_path: PathBuf = "./.sheepit-manager.toml".into();
     let config = config::read_config(config_path.clone());
     {
         let map = CLIENTS.lock().await;
         if map.contains_key(client) {
             println!("Cannot start {:?} because it is already running.", client);
-            return;
+            return format!("Cannot start {:?} because it's already running.", client);
         }
     }
     println!("Starting: {}", client);
@@ -97,17 +115,18 @@ pub async fn start_client(client: &str) {
     {
         let mut map = CLIENTS.lock().await;
         map.insert(client.to_string(), child);
+        format!("Client {:?} started.", client)
     }
 }
 
-pub async fn pause_client(client: &str) {
-    send_command_to_process(client, "pause\n").await;
+pub async fn pause_client(client: &str) -> String {
+    send_command_to_process(client, "pause\n").await
 }
-pub async fn stop_client(client: &str) {
-    send_command_to_process(client, "stop\n").await;
+pub async fn stop_client(client: &str) -> String {
+    send_command_to_process(client, "stop\n").await
 }
-pub async fn stop_client_now(client: &str) {
-    send_command_to_process(client, "quit\n").await;
+pub async fn stop_client_now(client: &str) -> String {
+    send_command_to_process(client, "quit\n").await
 }
 pub async fn client_status(_client: &str) {}
 
