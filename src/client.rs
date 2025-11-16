@@ -87,6 +87,8 @@ pub async fn start_client(client: &str) {
             config.paths.sheepit_cache_dir.display(),
             &client
         ))
+        .arg("-hostname")
+        .arg(format!("{}-{}", config.general.client_name, client))
         .stdin(std::process::Stdio::piped())
         .stdout(std::process::Stdio::inherit())
         .stderr(std::process::Stdio::inherit())
