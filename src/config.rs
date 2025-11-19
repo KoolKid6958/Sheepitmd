@@ -27,6 +27,7 @@ pub struct Paths {
     pub sheepit_cache_dir: PathBuf,
     pub shared_zip_dir: PathBuf,
     pub sheepit_client_location: PathBuf,
+    pub log_dir: PathBuf,
 }
 
 #[derive(Serialize, Deserialize, Clone)]
@@ -105,6 +106,7 @@ pub fn generate_config(config_path: PathBuf) {
             sheepit_cache_dir: "/tmp/sheepitm/cache".into(),
             shared_zip_dir: "".into(),
             sheepit_client_location: "/tmp/sheepitm/client.jar".into(),
+            log_dir: "/tmp/sheepitm/logs".into(),
         },
         defaults: Defaults { ram: 0, cores: 0 },
         cpu: Cpu {
