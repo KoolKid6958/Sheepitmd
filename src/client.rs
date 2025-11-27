@@ -83,6 +83,16 @@ pub async fn start_client(client: &str) -> String {
             .await
             .expect("There was an error downloading the client"),
     }
+    // Checks if the log path exists, it seems sheepit wont auto create it so we have to.
+    let mut log_path: PathBuf = config.paths.log_dir.clone();
+    log_path.push(client);
+
+    if !Path::new(&log_path).exists() {
+        fs::create_dir_all(log_path).await.expect(
+            "Failed to create directory. Please check that you have the necessary permissions",
+        );
+    } else {
+    }
     // Set config options for the client
     let child = Command::new("java")
         .arg("-jar")
@@ -107,9 +117,11 @@ pub async fn start_client(client: &str) -> String {
         ))
         .arg("-hostname")
         .arg(format!("{}-{}", config.general.client_name, client))
+        .arg("-logdir")
+        .arg(format!("{}/{}", config.paths.log_dir.display(), client))
         .stdin(std::process::Stdio::piped())
-        .stdout(std::process::Stdio::inherit())
-        .stderr(std::process::Stdio::inherit())
+        .stdout(std::process::Stdio::piped())
+        .stderr(std::process::Stdio::piped())
         .spawn()
         .expect("failed to spawn client");
     {
