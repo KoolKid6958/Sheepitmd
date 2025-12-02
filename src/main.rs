@@ -60,7 +60,7 @@ enum Commands {
 
 #[tokio::main]
 async fn main() {
-    // Inital arg stuff.
+    // Initial arg stuff.
     let cli = Cli::parse();
     let config_path: PathBuf = "./.sheepit-manager.toml".into();
     match &cli.command {

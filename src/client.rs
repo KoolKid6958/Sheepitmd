@@ -157,10 +157,10 @@ async fn download_client(config: Config) -> Result<(), Box<dyn std::error::Error
     let client_location = config.paths.sheepit_client_location;
     let path = client_location
         .parent()
-        .expect("An error occured with the client path. ");
+        .expect("An error occurred with the client path. ");
 
     if !Path::new(&path).exists() {
-        println!("Directory {:?} doesnt exist. Creating now.", path);
+        println!("Directory {:?} doesn't exist. Creating now.", path);
         fs::create_dir_all(path).await.expect(
             "Failed to create directory. Please check that you have the necessary permissions",
         );
