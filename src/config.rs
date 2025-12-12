@@ -80,13 +80,13 @@ pub fn generate_config(config_path: PathBuf) {
         for gpu_name in gpus {
             let optix_id = format!("OPTIX_{}", i);
             let key = format!("{}-{}", gpu_name, i);
-            i = i + 1;
+            i += 1;
             gpu_map.insert(
                 key,
                 Gpu {
                     ram: 0,
                     cores: 0,
-                    optix_id: optix_id,
+                    optix_id,
                     enabled: true,
                 },
             );

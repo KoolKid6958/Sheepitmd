@@ -33,7 +33,7 @@ async fn get_command(Json(payload): Json<Instruction>) -> String {
         _ => {
             println!("Unknown");
             println!("{}", &payload.instruction);
-            format!("Unknown instruction, are you sure the client and server versions match?")
+            "Unknown instruction, are you sure the client and server versions match?".to_string()
         }
     }
 }

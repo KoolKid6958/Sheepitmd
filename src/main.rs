@@ -94,23 +94,23 @@ async fn main() {
         },
         Some(Commands::Start { target }) => {
             let instruction: &str = "start_client";
-            let _ = control::manage_client(&target, instruction).await;
+            let _ = control::manage_client(target, instruction).await;
         }
         Some(Commands::Pause { target }) => {
             let instruction: &str = "pause_client";
-            let _ = control::manage_client(&target, instruction).await;
+            let _ = control::manage_client(target, instruction).await;
         }
         Some(Commands::Stop { target }) => {
             let instruction: &str = "stop_client";
-            let _ = control::manage_client(&target, instruction).await;
+            let _ = control::manage_client(target, instruction).await;
         }
         Some(Commands::StopNow { target }) => {
             let instruction: &str = "stop_client_now";
-            let _ = control::manage_client(&target, instruction).await;
+            let _ = control::manage_client(target, instruction).await;
         }
         Some(Commands::Status { target }) => {
             let instruction: &str = "get_client_status";
-            let _ = control::manage_client(&target, instruction).await;
+            let _ = control::manage_client(target, instruction).await;
         }
         Some(Commands::PrintConfig {}) => config::print_config(config_path),
         None => {

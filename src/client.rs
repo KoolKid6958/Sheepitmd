@@ -36,31 +36,31 @@ async fn send_command_to_process(client_id: &str, command: &str) -> String {
                     client_id,
                     e
                 );
-                return format!(
+                format!(
                     "Failed to flush command '{}' to client '{}': {}",
                     command.trim_end(),
                     client_id,
                     e
-                );
+                )
             } else {
                 println!(
                     "Sent command '{}' to client '{}'",
                     command.trim_end(),
                     client_id
                 );
-                return format!(
+                format!(
                     "Sent command '{}' to client '{}'",
                     command.trim_end(),
                     client_id
-                );
+                )
             }
         } else {
             eprintln!("Client '{}' has no stdin handle", client_id);
-            return format!("Client '{}' has no stdin handle", client_id);
+            format!("Client '{}' has no stdin handle", client_id)
         }
     } else {
         println!("Client '{}' is not running.", client_id);
-        return format!("Client '{}' is not running.", client_id);
+        format!("Client '{}' is not running.", client_id)
     }
 }
 
@@ -91,8 +91,7 @@ pub async fn start_client(client: &str) -> String {
         fs::create_dir_all(log_path).await.expect(
             "Failed to create directory. Please check that you have the necessary permissions",
         );
-    } else {
-    }
+    } 
     // Set config options for the client
     let child = Command::new("java")
         .arg("-jar")
@@ -164,8 +163,7 @@ async fn download_client(config: Config) -> Result<(), Box<dyn std::error::Error
         fs::create_dir_all(path).await.expect(
             "Failed to create directory. Please check that you have the necessary permissions",
         );
-    } else {
-    }
+    } 
     let client = Client::new();
     let mut response = client.get(url).send().await?;
     let mut file = fs::File::create(&client_location).await?;
