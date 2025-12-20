@@ -20,6 +20,7 @@ pub struct General {
     pub renderkey: String,
     pub headless: bool,
     pub server: String,
+    pub debug: bool,
 }
 
 #[derive(Serialize, Deserialize, Clone)]
@@ -101,6 +102,7 @@ pub fn generate_config(config_path: PathBuf) {
             renderkey: "".to_string(),
             headless: true,
             server: "https://sheepit-renderfarm.com".to_string(),
+            debug: false,
         },
         paths: Paths {
             sheepit_cache_dir: "/tmp/sheepitm/cache".into(),
