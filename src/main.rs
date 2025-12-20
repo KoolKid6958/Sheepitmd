@@ -9,7 +9,7 @@ mod httpd;
 
 /// Daemon for the SheepIt Manager
 #[derive(Parser)]
-#[command(version, about, long_about = None)]
+#[command(version, about, long_about = None, arg_required_else_help = true,)]
 struct Cli {
     #[command(subcommand)]
     command: Option<Commands>,
@@ -113,11 +113,9 @@ async fn main() {
             let _ = control::manage_client(target, instruction).await;
         }
         Some(Commands::PrintConfig {}) => config::print_config(config_path),
-        None => {
-            println!("Please run the program with arguments. Use -h to see available options.")
-        }
         Some(Commands::Daemon {}) => {
             httpd::start().await;
         }
+        None => {}
     }
 }
