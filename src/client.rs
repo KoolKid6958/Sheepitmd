@@ -91,10 +91,11 @@ pub async fn start_client(client: &str) -> String {
         fs::create_dir_all(log_path).await.expect(
             "Failed to create directory. Please check that you have the necessary permissions",
         );
-    } 
+    }
     // Set config options for the client
-    let child = Command::new("java")
-        .arg("-jar")
+    let mut cmd = Command::new("java");
+
+    cmd.arg("-jar")
         .arg(&client_path)
         .arg("-ui")
         .arg("text")
@@ -117,12 +118,19 @@ pub async fn start_client(client: &str) -> String {
         .arg("-hostname")
         .arg(format!("{}-{}", config.general.client_name, client))
         .arg("-logdir")
-        .arg(format!("{}/{}", config.paths.log_dir.display(), client))
+        .arg(format!("{}/{}", config.paths.log_dir.display(), client));
+
+    if config.general.debug {
+        cmd.arg("--verbose").arg("--log-stdout");
+    }
+
+    let child = cmd
         .stdin(std::process::Stdio::piped())
         .stdout(std::process::Stdio::piped())
         .stderr(std::process::Stdio::piped())
         .spawn()
         .expect("failed to spawn client");
+
     {
         let mut map = CLIENTS.lock().await;
         map.insert(client.to_string(), child);
@@ -163,7 +171,7 @@ async fn download_client(config: Config) -> Result<(), Box<dyn std::error::Error
         fs::create_dir_all(path).await.expect(
             "Failed to create directory. Please check that you have the necessary permissions",
         );
-    } 
+    }
     let client = Client::new();
     let mut response = client.get(url).send().await?;
     let mut file = fs::File::create(&client_location).await?;
