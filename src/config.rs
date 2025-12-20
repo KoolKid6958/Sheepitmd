@@ -1,6 +1,6 @@
 use nvml_wrapper::{Nvml, error::NvmlError};
 use serde::{Deserialize, Serialize};
-use std::{collections::BTreeMap, fs, path::PathBuf};
+use std::{collections::BTreeMap, fs, io, io::Write, path::PathBuf};
 
 #[derive(Serialize, Deserialize, Clone)]
 pub struct Config {
@@ -73,53 +73,73 @@ fn get_gpus() -> Result<Vec<String>, NvmlError> {
     Ok(gpus)
 }
 
-pub fn generate_config(config_path: PathBuf) {
-    // Dynamic GPU Map
-    let mut gpu_map = BTreeMap::new();
-    if let Ok(gpus) = get_gpus() {
-        let mut i = 0;
-        for gpu_name in gpus {
-            let optix_id = format!("OPTIX_{}", i);
-            let key = format!("{}-{}", gpu_name, i);
-            i += 1;
-            gpu_map.insert(
-                key,
-                Gpu {
-                    ram: 0,
-                    cores: 0,
-                    optix_id,
-                    enabled: true,
-                },
-            );
-        }
+fn check_if_config_exists(config_path: &PathBuf) -> bool {
+    // Check if the config file exists, if it does, confirm with the user before overwriting.
+    if config_path.exists() {
+        print!("The file exists. Would you like to overwrite it? (y/N): ");
+        io::stdout().flush().unwrap();
+
+        let mut confirm = String::new();
+        io::stdin()
+            .read_line(&mut confirm)
+            .expect("There was an error");
+        let confirm = confirm.trim().to_lowercase();
+        if confirm == "y" { true } else { false }
+    } else {
+        true
     }
-    // Write to the file
-    let config = Config {
-        general: General {
-            client_name: "".to_string(),
-            shared_zip: false,
-            username: "".to_string(),
-            renderkey: "".to_string(),
-            headless: true,
-            server: "https://sheepit-renderfarm.com".to_string(),
-            debug: false,
-        },
-        paths: Paths {
-            sheepit_cache_dir: "/tmp/sheepitm/cache".into(),
-            shared_zip_dir: "".into(),
-            sheepit_client_location: "/tmp/sheepitm/client.jar".into(),
-            log_dir: "/tmp/sheepitm/logs".into(),
-        },
-        defaults: Defaults { ram: 0, cores: 0 },
-        cpu: Cpu {
-            ram: 0,
-            cores: 0,
-            enabled: false,
-        },
-        gpu: gpu_map,
-    };
-    let toml = toml::to_string(&config).unwrap();
-    fs::write(config_path, toml).expect("Failed to generate config.");
+}
+
+pub fn generate_config(config_path: PathBuf) {
+    if check_if_config_exists(&config_path) {
+        // Dynamic GPU Map
+        let mut gpu_map = BTreeMap::new();
+        if let Ok(gpus) = get_gpus() {
+            let mut i = 0;
+            for gpu_name in gpus {
+                let optix_id = format!("OPTIX_{}", i);
+                let key = format!("{}-{}", gpu_name, i);
+                i += 1;
+                gpu_map.insert(
+                    key,
+                    Gpu {
+                        ram: 0,
+                        cores: 0,
+                        optix_id,
+                        enabled: true,
+                    },
+                );
+            }
+        }
+        // Write to the file
+        let config = Config {
+            general: General {
+                client_name: "".to_string(),
+                shared_zip: false,
+                username: "".to_string(),
+                renderkey: "".to_string(),
+                headless: true,
+                server: "https://sheepit-renderfarm.com".to_string(),
+                debug: false,
+            },
+            paths: Paths {
+                sheepit_cache_dir: "/tmp/sheepitm/cache".into(),
+                shared_zip_dir: "".into(),
+                sheepit_client_location: "/tmp/sheepitm/client.jar".into(),
+                log_dir: "/tmp/sheepitm/logs".into(),
+            },
+            defaults: Defaults { ram: 0, cores: 0 },
+            cpu: Cpu {
+                ram: 0,
+                cores: 0,
+                enabled: false,
+            },
+            gpu: gpu_map,
+        };
+        let toml = toml::to_string(&config).unwrap();
+        fs::write(&config_path, toml).expect("Failed to generate config.");
+        println!("Config generated at: {:?}", config_path);
+    }
 }
 
 pub fn read_config(config_path: PathBuf) -> Config {

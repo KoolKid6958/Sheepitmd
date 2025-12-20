@@ -1,5 +1,5 @@
 use clap::{Parser, Subcommand};
-use std::{io, io::Write, path::PathBuf};
+use std::path::PathBuf;
 
 pub mod client;
 mod config;
@@ -65,25 +65,7 @@ async fn main() {
     let config_path: PathBuf = "./.sheepit-manager.toml".into();
     match &cli.command {
         Some(Commands::GenConfig {}) => {
-            // Check if the file exists
-            if config_path.exists() {
-                print!("The file exists. Would you like to overwrite it? (y/N): ");
-                io::stdout().flush().unwrap();
-                let mut confirm = String::new();
-                io::stdin()
-                    .read_line(&mut confirm)
-                    .expect("There was an error");
-                let confirm = confirm.trim().to_lowercase();
-                if confirm == "y" {
-                    config::generate_config(config_path.to_path_buf());
-                    println!("Config generated at: {:?}", config_path);
-                } else {
-                    println!("Exiting")
-                }
-            } else {
-                config::generate_config(config_path.to_path_buf());
-                println!("Config generated at: {:?}", config_path);
-            }
+            config::generate_config(config_path);
         }
         Some(Commands::LsGPU {}) => match hardware::get_nvidia_gpus() {
             Ok(_) => {}
