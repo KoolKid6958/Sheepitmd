@@ -1,5 +1,5 @@
 use serde::{Deserialize, Serialize};
-use std::{collections::BTreeMap, fs, io, io::Write, path::PathBuf};
+use std::{collections::BTreeMap, fs, io, io::Write, path::Path, path::PathBuf};
 
 use crate::hardware;
 
@@ -53,7 +53,7 @@ pub struct Gpu {
     enabled: bool,
 }
 
-fn check_if_config_exists(config_path: &PathBuf) -> bool {
+fn check_if_config_exists(config_path: &Path) -> bool {
     // Check if the config file exists, if it does, confirm with the user before overwriting.
     if config_path.exists() {
         print!("The file exists. Would you like to overwrite it? (y/N): ");
@@ -64,7 +64,7 @@ fn check_if_config_exists(config_path: &PathBuf) -> bool {
             .read_line(&mut confirm)
             .expect("There was an error");
         let confirm = confirm.trim().to_lowercase();
-        if confirm == "y" { true } else { false }
+        confirm == "y"
     } else {
         true
     }
