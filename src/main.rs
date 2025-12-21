@@ -1,6 +1,8 @@
 use clap::{Parser, Subcommand};
 use std::path::PathBuf;
 
+use crate::config::CONFIG_PATH;
+
 pub mod client;
 mod config;
 mod control;
@@ -62,7 +64,7 @@ enum Commands {
 async fn main() {
     // Initial arg stuff.
     let cli = Cli::parse();
-    let config_path: PathBuf = "./.sheepit-manager.toml".into();
+    let config_path = PathBuf::from(CONFIG_PATH);
     match &cli.command {
         Some(Commands::GenConfig {}) => {
             config::generate_config(config_path);

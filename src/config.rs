@@ -3,6 +3,8 @@ use std::{collections::BTreeMap, fs, io, io::Write, path::Path, path::PathBuf};
 
 use crate::hardware;
 
+pub const CONFIG_PATH: &str = "./.sheepit-manager.toml";
+
 #[derive(Serialize, Deserialize, Clone)]
 pub struct Config {
     pub general: General,
