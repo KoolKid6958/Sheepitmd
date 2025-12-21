@@ -1,6 +1,7 @@
-use nvml_wrapper::{Nvml, error::NvmlError};
 use serde::{Deserialize, Serialize};
 use std::{collections::BTreeMap, fs, io, io::Write, path::PathBuf};
+
+use crate::hardware;
 
 #[derive(Serialize, Deserialize, Clone)]
 pub struct Config {
@@ -51,27 +52,6 @@ pub struct Gpu {
     pub optix_id: String,
     enabled: bool,
 }
-fn shorten_gpu_name(gpu_name: &str) -> String {
-    gpu_name
-        .replace("NVIDIA GeForce RTX", "")
-        .replace("NVIDIA GeForce GTX", "")
-        .replace(" ", "")
-        .to_lowercase()
-}
-
-fn get_gpus() -> Result<Vec<String>, NvmlError> {
-    let nvml = Nvml::init()?;
-    let num_gpu = nvml.device_count()?;
-    let mut gpus = Vec::new();
-
-    for i in 0..num_gpu {
-        let gpu = nvml.device_by_index(i)?;
-        let gpu_name = gpu.name()?;
-        let short_name = shorten_gpu_name(&gpu_name);
-        gpus.push(short_name);
-    }
-    Ok(gpus)
-}
 
 fn check_if_config_exists(config_path: &PathBuf) -> bool {
     // Check if the config file exists, if it does, confirm with the user before overwriting.
@@ -94,12 +74,10 @@ pub fn generate_config(config_path: PathBuf) {
     if check_if_config_exists(&config_path) {
         // Dynamic GPU Map
         let mut gpu_map = BTreeMap::new();
-        if let Ok(gpus) = get_gpus() {
-            let mut i = 0;
-            for gpu_name in gpus {
-                let optix_id = format!("OPTIX_{}", i);
-                let key = format!("{}-{}", gpu_name, i);
-                i += 1;
+        if let Ok(gpus) = hardware::get_nvidia_gpus() {
+            for i in gpus {
+                let optix_id = format!("OPTIX_{}", i.index);
+                let key = format!("{}-{}", i.short_name, i.index);
                 gpu_map.insert(
                     key,
                     Gpu {

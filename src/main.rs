@@ -68,7 +68,11 @@ async fn main() {
             config::generate_config(config_path);
         }
         Some(Commands::LsGPU {}) => match hardware::get_nvidia_gpus() {
-            Ok(_) => {}
+            Ok(gpus) => {
+                for i in gpus {
+                    println!("GPU Name: {} | Default id: OPTIX_{}", i.gpu_name, i.index);
+                }
+            }
             Err(e) => eprintln!(
                 "There was an error getting the Nvidia GPUs. Please check that you have Nvidia drivers installed correctly. Err: {}",
                 e
