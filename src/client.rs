@@ -9,6 +9,11 @@ use tokio::{fs, io::AsyncWriteExt, process::Child, process::Command};
 
 static CLIENTS: Lazy<Mutex<HashMap<String, Child>>> = Lazy::new(|| Mutex::new(HashMap::new()));
 
+async fn is_client_running(client: &str) -> bool {
+    let map = CLIENTS.lock().await;
+    map.contains_key(client)
+}
+
 async fn send_command_to_process(client_id: &str, command: &str) -> String {
     let mut map = CLIENTS.lock().await;
 
@@ -146,7 +151,13 @@ pub async fn stop_client(client: &str) -> String {
 pub async fn stop_client_now(client: &str) -> String {
     send_command_to_process(client, "quit\n").await
 }
-pub async fn client_status(_client: &str) {}
+pub async fn client_status(client: &str) -> String {
+    if is_client_running(&client).await {
+        format!("Client: {} is running.", &client)
+    } else {
+        format!("Client: {} is not running.", &client)
+    }
+}
 
 fn check_if_jar_exists(path: PathBuf) -> bool {
     if Path::new(&path).exists() {

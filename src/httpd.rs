@@ -25,11 +25,7 @@ async fn get_command(Json(payload): Json<Instruction>) -> String {
         "pause_client" => client::pause_client(&payload.client).await,
         "stop_client" => client::stop_client(&payload.client).await,
         "stop_client_now" => client::stop_client_now(&payload.client).await,
-        "get_client_status" => {
-            println!("Getting status of: {:?}", payload.client);
-            client::client_status(&payload.client).await;
-            format!("Status of: {} (This doesn't work yet)", payload.client)
-        }
+        "get_client_status" => client::client_status(&payload.client).await,
         _ => {
             println!("Unknown");
             println!("{}", &payload.instruction);
