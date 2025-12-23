@@ -149,7 +149,10 @@ pub async fn stop_client(client: &str) -> String {
     send_command_to_process(client, "stop\n").await
 }
 pub async fn stop_client_now(client: &str) -> String {
-    send_command_to_process(client, "quit\n").await
+    let ret = send_command_to_process(client, "quit\n").await;
+    // This is not a good way to do this, as it doesn't actually check if the client is closed, it just removes it from the hashmap.
+    CLIENTS.lock().await.remove(client);
+    ret
 }
 pub async fn client_status(client: &str) -> String {
     if is_client_running(&client).await {
