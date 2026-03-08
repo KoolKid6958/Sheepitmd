@@ -1,9 +1,21 @@
+use crate::hardware;
+
+#[cfg(not(debug_assertions))]
+use dirs::home_dir;
 use serde::{Deserialize, Serialize};
 use std::{collections::BTreeMap, fs, io, io::Write, path::Path, path::PathBuf};
 
-use crate::hardware;
-
-pub const CONFIG_PATH: &str = "./.sheepit-manager.toml";
+#[cfg(debug_assertions)]
+pub fn config_path() -> PathBuf {
+    let ret: PathBuf = "./sheepit-manager.toml".into();
+    ret
+}
+#[cfg(not(debug_assertions))]
+pub fn config_path() -> PathBuf {
+    home_dir()
+        .expect("Could not find home directory")
+        .join(".config/sheepitm/sheepit-manager.toml")
+}
 
 #[derive(Serialize, Deserialize, Clone)]
 pub struct Config {
@@ -117,6 +129,17 @@ pub fn generate_config(config_path: PathBuf) {
             gpu: gpu_map,
         };
         let toml = toml::to_string(&config).unwrap();
+        let path = config_path
+            .parent()
+            .expect("An error occurred with the client path. ");
+
+        if !Path::new(&path).exists() {
+            println!("Directory {:?} doesn't exist. Creating now.", path);
+            fs::create_dir_all(path).expect(
+                "Failed to create directory. Please check that you have the necessary permissions",
+            );
+        }
+
         fs::write(&config_path, toml).expect("Failed to generate config.");
         println!("Config generated at: {:?}", config_path);
     }

@@ -1,5 +1,5 @@
 // This file is meant for managing the sheepit client itself.
-use crate::config::{self, CONFIG_PATH, Config};
+use crate::config::{self, Config};
 use once_cell::sync::Lazy;
 use reqwest::Client;
 use std::collections::HashMap;
@@ -69,7 +69,7 @@ async fn send_command_to_process(client_id: &str, command: &str) -> String {
 }
 
 pub async fn start_client(client: &str) -> String {
-    let config_path = PathBuf::from(CONFIG_PATH);
+    let config_path = config::config_path();
     let config = config::read_config(config_path.clone());
     {
         let map = CLIENTS.lock().await;

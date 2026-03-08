@@ -1,7 +1,4 @@
 use clap::{Parser, Subcommand};
-use std::path::PathBuf;
-
-use crate::config::CONFIG_PATH;
 
 pub mod client;
 mod config;
@@ -64,7 +61,7 @@ enum Commands {
 async fn main() {
     // Initial arg stuff.
     let cli = Cli::parse();
-    let config_path = PathBuf::from(CONFIG_PATH);
+    let config_path = config::config_path();
     match &cli.command {
         Some(Commands::GenConfig {}) => {
             config::generate_config(config_path);
